@@ -33,7 +33,16 @@ export default function LoginForm() {
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);
-      setError(error?.message || "Invalid email or password");
+      // Provide more detailed error information
+      if (error.message.includes("Failed to fetch")) {
+        setError(
+          `Network error: Failed to connect to Supabase. Please check your network connection and CORS settings. URL: ${import.meta.env.VITE_SUPABASE_URL}`,
+        );
+      } else if (error.status) {
+        setError(`Server error (${error.status}): ${error.message}`);
+      } else {
+        setError(error?.message || "Invalid email or password");
+      }
     } finally {
       setLoading(false);
     }

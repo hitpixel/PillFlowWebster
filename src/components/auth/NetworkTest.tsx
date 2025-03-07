@@ -9,6 +9,10 @@ export default function NetworkTest() {
   const [loading, setLoading] = useState(false);
 
   const testConnection = async () => {
+    console.log(
+      "Testing connection with URL:",
+      import.meta.env.VITE_SUPABASE_URL,
+    );
     setLoading(true);
     setError("");
     setResult(null);

@@ -31,3 +31,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     sameSite: "lax",
   },
 });
+
+// Log Supabase configuration for debugging
+console.log("Supabase Configuration:", {
+  url: supabaseUrl,
+  hasAnonKey: !!supabaseAnonKey,
+  domain: window.location.hostname,
+  origin: window.location.origin,
+});

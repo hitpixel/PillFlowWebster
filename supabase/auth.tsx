@@ -188,13 +188,23 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      // Use app.pillflow.com.au as the redirect URL for production
-      const isProd = window.location.hostname === "app.pillflow.com.au";
-      const redirectUrl = isProd
-        ? "https://app.pillflow.com.au/auth/callback"
-        : `${window.location.origin}/auth/callback`;
+      // Get the current hostname
+      const hostname = window.location.hostname;
+
+      // Determine the appropriate redirect URL based on the environment
+      let redirectUrl;
+      if (hostname === "app.pillflow.com.au") {
+        redirectUrl = "https://app.pillflow.com.au/auth/callback";
+      } else if (hostname.includes("vercel.app")) {
+        // For Vercel deployments
+        redirectUrl = `${window.location.origin}/auth/callback`;
+      } else {
+        // Local development or other environments
+        redirectUrl = `${window.location.origin}/auth/callback`;
+      }
 
       console.log("Google OAuth redirect URL:", redirectUrl);
+      console.log("Current hostname:", hostname);
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",

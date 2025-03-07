@@ -13,9 +13,15 @@ export default function GoogleCallback() {
     const handleCallback = async () => {
       try {
         setLoading(true);
-        // Get the hash fragment from the URL
+        // Get the hash fragment and search params from the URL
         const hash = window.location.hash;
+        const searchParams = window.location.search;
         console.log("Processing OAuth callback with hash:", hash);
+        console.log(
+          "Processing OAuth callback with search params:",
+          searchParams,
+        );
+        console.log("Full callback URL:", window.location.href);
 
         // Check if we have a session
         const {
@@ -32,19 +38,35 @@ export default function GoogleCallback() {
           navigate("/dashboard");
         } else {
           // If no session, try to exchange the token
-          const { data, error } = await supabase.auth.exchangeCodeForSession(
-            window.location.href,
-          );
+          try {
+            console.log("Attempting to exchange code for session");
+            const { data, error } = await supabase.auth.exchangeCodeForSession(
+              window.location.href,
+            );
 
-          if (error) {
-            throw error;
-          }
+            if (error) {
+              throw error;
+            }
 
-          if (data.session) {
-            console.log("Successfully exchanged code for session");
-            navigate("/dashboard");
-          } else {
-            setError("No session found after code exchange");
+            if (data.session) {
+              console.log("Successfully exchanged code for session");
+              navigate("/dashboard");
+            } else {
+              setError("No session found after code exchange");
+            }
+          } catch (exchangeError: any) {
+            console.error("Error exchanging code:", exchangeError);
+
+            // Try to get the session again after a short delay
+            setTimeout(async () => {
+              const { data: retryData } = await supabase.auth.getSession();
+              if (retryData.session) {
+                console.log("Session found on retry");
+                navigate("/dashboard");
+              } else {
+                setError(exchangeError.message || "Failed to exchange code");
+              }
+            }, 1000);
           }
         }
       } catch (err: any) {

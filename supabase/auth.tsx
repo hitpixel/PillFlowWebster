@@ -98,7 +98,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting sign in process with email:", email);
 
-      // Try the SDK method with explicit persistence and credentials mode
+      // Use localStorage approach for Vercel deployment
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -114,7 +114,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) {
-        // If SDK method fails, try direct API approach with credentials included
+        // If SDK method fails, try direct API approach with no credentials
         console.warn("SDK method failed, trying direct API approach");
 
         const supabaseUrl =
@@ -133,7 +133,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               apikey: supabaseAnonKey,
               "X-Client-Info": "pillflow-web-app",
             },
-            credentials: "include",
+            // Don't use credentials mode as it can cause CORS issues
+            credentials: "omit",
             body: JSON.stringify({
               email,
               password,
@@ -152,6 +153,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               access_token,
               refresh_token: refresh_token || "",
             });
+            // Store in localStorage as a fallback
+            localStorage.setItem("sb-access-token", access_token);
+            if (refresh_token) {
+              localStorage.setItem("sb-refresh-token", refresh_token);
+            }
             return { session: { access_token, refresh_token } };
           }
         } else {

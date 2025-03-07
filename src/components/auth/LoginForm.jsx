@@ -18,20 +18,35 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       console.log("Attempting login with:", email);
+      // Add a small delay to ensure network is ready
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await signIn(email, password);
       console.log("Login successful, navigating to dashboard");
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      setError(error?.message || "Invalid email or password");
+      // Provide more detailed error information
+      if (error.message && error.message.includes("Failed to fetch")) {
+        setError(
+          `Network error: Failed to connect to Supabase. Please check your network connection. URL: ${import.meta.env.VITE_SUPABASE_URL}`,
+        );
+      } else if (error.status) {
+        setError(`Server error (${error.status}): ${error.message}`);
+      } else {
+        setError(error?.message || "Invalid email or password");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,6 +69,7 @@ export default function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="bg-[#1a2133] border-[#1e2738]"
               />
             </div>
             <div className="space-y-2">
@@ -65,11 +81,12 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="bg-[#1a2133] border-[#1e2738]"
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </CardContent>

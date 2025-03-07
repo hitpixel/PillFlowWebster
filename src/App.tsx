@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
+import { useAuth } from "../supabase/auth";
 import routes from "tempo-routes";
 import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
@@ -11,7 +12,7 @@ import Home from "./components/pages/home";
 import ScanOut from "./components/pages/scan-out";
 import Customers from "./components/pages/customers";
 import Settings from "./components/pages/settings";
-import { AuthProvider, useAuth } from "../supabase/auth";
+import { AuthProvider } from "../supabase/auth";
 import { DashboardProvider } from "./components/dashboard/context/DashboardContext";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -22,7 +23,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   return <>{children}</>;

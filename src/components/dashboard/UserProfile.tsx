@@ -1,14 +1,14 @@
-import { useAuth } from "../../../supabase/auth"
+import { useAuth } from "../../../supabase/auth";
 
 export function UserProfile() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (!user) {
-    return <div>Please sign in</div>
+    return <div>Please sign in</div>;
   }
 
   return (
@@ -17,5 +17,5 @@ export function UserProfile() {
       <p>Name: {user.user_metadata?.full_name}</p>
       <p>Email: {user.email}</p>
     </div>
-  )
+  );
 }

@@ -22,7 +22,7 @@ export default function LandingPage() {
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -31,7 +31,7 @@ export default function LandingPage() {
       await signIn(email, password);
       console.log("Home page login successful");
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Home page login error:", error);
       setError(error?.message || "Invalid email or password");
     } finally {

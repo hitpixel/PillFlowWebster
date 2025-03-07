@@ -6,6 +6,7 @@ import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
 import TestLogin from "./components/auth/TestLogin";
 import NetworkTest from "./components/auth/NetworkTest";
+import GoogleCallback from "./components/auth/GoogleCallback";
 import Dashboard from "./components/pages/dashboard";
 import Success from "./components/pages/success";
 import Home from "./components/pages/home";
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/auth/callback" element={<GoogleCallback />} />
         <Route path="/test-login" element={<TestLogin />} />
         <Route path="/network-test" element={<NetworkTest />} />
         <Route

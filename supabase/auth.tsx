@@ -212,11 +212,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Current hostname:", hostname);
       console.log("Using Supabase URL:", supabaseUrl);
 
-      // Use direct API call to ensure correct Supabase project URL
-      window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}&access_type=offline&prompt=consent`;
-
-      // Return a placeholder since we're redirecting
-      return { provider: "google", url: redirectUrl };
+      // Use the SDK method instead of direct URL redirect
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
 
       if (error) throw error;
       return data;

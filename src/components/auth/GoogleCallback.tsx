@@ -23,51 +23,49 @@ export default function GoogleCallback() {
         );
         console.log("Full callback URL:", window.location.href);
 
-        // Check if we have a session
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        try {
+          console.log("Attempting to handle OAuth callback");
 
-        if (sessionError) {
-          throw sessionError;
-        }
+          // First try to exchange the code for a session
+          const { data, error } = await supabase.auth.exchangeCodeForSession(
+            window.location.href,
+          );
 
-        if (session) {
-          console.log("Session found, redirecting to dashboard");
-          navigate("/dashboard");
-        } else {
-          // If no session, try to exchange the token
-          try {
-            console.log("Attempting to exchange code for session");
-            const { data, error } = await supabase.auth.exchangeCodeForSession(
-              window.location.href,
-            );
+          if (error) {
+            console.warn("Error exchanging code:", error);
+            // Continue to check for session anyway
+          }
 
-            if (error) {
-              throw error;
-            }
+          // Check if we have a session after the exchange
+          const {
+            data: { session },
+            error: sessionError,
+          } = await supabase.auth.getSession();
 
-            if (data.session) {
-              console.log("Successfully exchanged code for session");
+          if (sessionError) {
+            console.error("Error getting session:", sessionError);
+          }
+
+          if (session) {
+            console.log("Session found, redirecting to dashboard");
+            navigate("/dashboard");
+            return;
+          }
+
+          // If we still don't have a session, try one more time after a delay
+          console.log("No session found, retrying after delay...");
+          setTimeout(async () => {
+            const { data: retryData } = await supabase.auth.getSession();
+            if (retryData.session) {
+              console.log("Session found on retry");
               navigate("/dashboard");
             } else {
-              setError("No session found after code exchange");
+              setError("Failed to get session. Please try logging in again.");
             }
-          } catch (exchangeError: any) {
-            console.error("Error exchanging code:", exchangeError);
-
-            // Try to get the session again after a short delay
-            setTimeout(async () => {
-              const { data: retryData } = await supabase.auth.getSession();
-              if (retryData.session) {
-                console.log("Session found on retry");
-                navigate("/dashboard");
-              } else {
-                setError(exchangeError.message || "Failed to exchange code");
-              }
-            }, 1000);
-          }
+          }, 2000);
+        } catch (exchangeError: any) {
+          console.error("Error in OAuth callback:", exchangeError);
+          setError(exchangeError.message || "Failed to process authentication");
         }
       } catch (err: any) {
         console.error("Error processing OAuth callback:", err);

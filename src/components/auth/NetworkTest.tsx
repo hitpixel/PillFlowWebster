@@ -20,12 +20,12 @@ export default function NetworkTest() {
     try {
       // Test basic connectivity to Supabase
       const response = await fetch(
-        "https://dmundkgajcfptrgnniiy.supabase.co/rest/v1/",
+        "https://hboghefefjvwbroshixn.supabase.co/rest/v1/",
         {
           method: "GET",
           headers: {
             apikey:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4",
           },
         },
       );
@@ -57,12 +57,12 @@ export default function NetworkTest() {
     try {
       // Test CORS with preflight
       const response = await fetch(
-        "https://dmundkgajcfptrgnniiy.supabase.co/rest/v1/customers?select=id",
+        "https://hboghefefjvwbroshixn.supabase.co/rest/v1/customers?select=id",
         {
           method: "GET",
           headers: {
             apikey:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4",
             "Content-Type": "application/json",
             "X-Client-Info": "pillflow-web-app",
           },

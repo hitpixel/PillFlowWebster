@@ -20,13 +20,13 @@ export default function TestLogin() {
     try {
       console.log("Test login with:", { email, password });
       const response = await fetch(
-        "https://dmundkgajcfptrgnniiy.supabase.co/auth/v1/token?grant_type=password",
+        "https://hboghefefjvwbroshixn.supabase.co/auth/v1/token?grant_type=password",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             apikey:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4",
             "X-Client-Info": "pillflow-web-app",
           },
           body: JSON.stringify({

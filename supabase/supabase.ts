@@ -4,10 +4,10 @@ import { Database } from "../src/types/supabase";
 // Always use the environment variables if available, otherwise fallback to hardcoded values
 const supabaseUrl =
   import.meta.env.VITE_SUPABASE_URL ||
-  "https://dmundkgajcfptrgnniiy.supabase.co";
+  "https://hboghefefjvwbroshixn.supabase.co";
 const supabaseAnonKey =
   import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4";
 
 // For Vercel deployment, use localStorage instead of cookies
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {

@@ -22,4 +22,12 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       "X-Client-Info": "pillflow-web-app",
     },
   },
+  // Ensure cookies work properly in production
+  cookies: {
+    name: "pillflow-sb-auth",
+    lifetime: 60 * 60 * 8, // 8 hours
+    domain: window.location.hostname,
+    path: "/",
+    sameSite: "lax",
+  },
 });

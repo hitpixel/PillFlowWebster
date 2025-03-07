@@ -19,16 +19,28 @@ export default function SignUpForm() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
     try {
+      console.log("Attempting signup with:", email);
       await signUp(email, password, fullName);
-      navigate("/login");
-    } catch (error) {
-      setError("Error creating account");
+      setSuccess("Account created successfully! You can now sign in.");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      setError(error?.message || "Error creating account");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,6 +62,7 @@ export default function SignUpForm() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
+                className="bg-[#1a2133] border-[#1e2738]"
               />
             </div>
             <div className="space-y-2">
@@ -61,6 +74,7 @@ export default function SignUpForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="bg-[#1a2133] border-[#1e2738]"
               />
             </div>
             <div className="space-y-2">
@@ -72,11 +86,13 @@ export default function SignUpForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="bg-[#1a2133] border-[#1e2738]"
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full">
-              Create account
+            {success && <p className="text-sm text-green-500">{success}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Creating account..." : "Create account"}
             </Button>
           </form>
         </CardContent>

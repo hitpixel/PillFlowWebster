@@ -43,26 +43,68 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      console.log("Starting sign up process with email:", email);
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: window.location.origin,
         },
-      },
-    });
-    if (error) throw error;
+      });
+
+      console.log("Sign up result:", {
+        success: !error,
+        error: error?.message,
+      });
+
+      if (error) throw error;
+
+      // Create a customer record for the new user
+      if (data?.user) {
+        try {
+          const { error: customerError } = await supabase
+            .from("customers")
+            .insert({
+              full_name: fullName,
+              email: email,
+              user_id: data.user.id,
+              status: "active",
+              avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+
+          if (customerError) {
+            console.error("Error creating customer record:", customerError);
+          }
+        } catch (customerErr) {
+          console.error("Error in customer creation:", customerErr);
+        }
+      }
+
+      return data;
+    } catch (err) {
+      console.error("Sign up error:", err);
+      throw err;
+    }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
       console.log("Starting sign in process with email:", email);
 
-      // Try the SDK method first
+      // Try the SDK method first with explicit persistence
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          persistSession: true,
+        },
       });
 
       console.log("Sign in attempt result:", {
@@ -75,15 +117,22 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // If SDK method fails, try direct API approach
         console.warn("SDK method failed, trying direct API approach");
 
+        const supabaseUrl =
+          import.meta.env.VITE_SUPABASE_URL ||
+          "https://dmundkgajcfptrgnniiy.supabase.co";
+        const supabaseAnonKey =
+          import.meta.env.VITE_SUPABASE_ANON_KEY ||
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA";
+
         const response = await fetch(
-          "https://dmundkgajcfptrgnniiy.supabase.co/auth/v1/token?grant_type=password",
+          `${supabaseUrl}/auth/v1/token?grant_type=password`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              apikey:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA",
+              apikey: supabaseAnonKey,
               "X-Client-Info": "pillflow-web-app",
+              "Access-Control-Allow-Origin": "*",
             },
             body: JSON.stringify({
               email,

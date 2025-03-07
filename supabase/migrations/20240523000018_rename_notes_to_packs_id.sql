@@ -1,0 +1,1 @@
+ALTER TABLE collections RENAME COLUMN notes TO packs_id;

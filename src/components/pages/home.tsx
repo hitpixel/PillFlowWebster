@@ -17,6 +17,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (user) {
+      console.log("User detected, redirecting to dashboard");
       navigate("/dashboard");
     }
   }, [user, navigate]);
@@ -26,10 +27,13 @@ export default function LandingPage() {
     setLoading(true);
     setError("");
     try {
+      console.log("Home page login attempt with:", email);
       await signIn(email, password);
+      console.log("Home page login successful");
       navigate("/dashboard");
-    } catch (error) {
-      setError("Invalid email or password");
+    } catch (error: any) {
+      console.error("Home page login error:", error);
+      setError(error?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }

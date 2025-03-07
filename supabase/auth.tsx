@@ -188,9 +188,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      // Use the current URL's origin for the redirect
-      // This ensures it works on both localhost and deployed environments
-      const redirectUrl = window.location.origin;
+      // Use app.pillflow.com.au as the redirect URL for production
+      const isProd = window.location.hostname === "app.pillflow.com.au";
+      const redirectUrl = isProd
+        ? "https://app.pillflow.com.au/auth/callback"
+        : `${window.location.origin}/auth/callback`;
+
       console.log("Google OAuth redirect URL:", redirectUrl);
 
       const { data, error } = await supabase.auth.signInWithOAuth({

@@ -188,6 +188,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
+      // Force the correct Supabase URL by directly using the API
+      const supabaseUrl = "https://hboghefefjvwbroshixn.supabase.co";
+      const supabaseAnonKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4";
+
       // Get the current hostname
       const hostname = window.location.hostname;
 
@@ -203,22 +208,15 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         redirectUrl = `${window.location.origin}/auth/callback`;
       }
 
-      // Update the redirect URL for the new Supabase project
-      const callbackUrl = redirectUrl;
-
       console.log("Google OAuth redirect URL:", redirectUrl);
       console.log("Current hostname:", hostname);
+      console.log("Using Supabase URL:", supabaseUrl);
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: callbackUrl,
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-          },
-        },
-      });
+      // Use direct API call to ensure correct Supabase project URL
+      window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}&access_type=offline&prompt=consent`;
+
+      // Return a placeholder since we're redirecting
+      return { provider: "google", url: redirectUrl };
 
       if (error) throw error;
       return data;

@@ -26,9 +26,13 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   cookies: {
     name: "pillflow-sb-auth",
     lifetime: 60 * 60 * 8, // 8 hours
-    domain: window.location.hostname,
+    domain:
+      window.location.hostname === "localhost"
+        ? "localhost"
+        : ".pillflow.com.au", // Allow subdomains
     path: "/",
-    sameSite: "lax",
+    sameSite: "none",
+    secure: true,
   },
 });
 

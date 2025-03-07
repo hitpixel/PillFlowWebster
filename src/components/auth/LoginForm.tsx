@@ -28,15 +28,17 @@ export default function LoginForm() {
     setLoading(true);
     try {
       console.log("Attempting login with:", email);
+      // Add a small delay to ensure network is ready
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await signIn(email, password);
       console.log("Login successful, navigating to dashboard");
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);
       // Provide more detailed error information
-      if (error.message.includes("Failed to fetch")) {
+      if (error.message && error.message.includes("Failed to fetch")) {
         setError(
-          `Network error: Failed to connect to Supabase. Please check your network connection and CORS settings. URL: ${import.meta.env.VITE_SUPABASE_URL}`,
+          `Network error: Failed to connect to Supabase. Please check your network connection. URL: ${import.meta.env.VITE_SUPABASE_URL}`,
         );
       } else if (error.status) {
         setError(`Server error (${error.status}): ${error.message}`);

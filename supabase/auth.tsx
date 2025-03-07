@@ -98,7 +98,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting sign in process with email:", email);
 
-      // Try the SDK method first with explicit persistence
+      // Try the SDK method with explicit persistence and credentials mode
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -114,7 +114,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) {
-        // If SDK method fails, try direct API approach
+        // If SDK method fails, try direct API approach with credentials included
         console.warn("SDK method failed, trying direct API approach");
 
         const supabaseUrl =
@@ -132,8 +132,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               "Content-Type": "application/json",
               apikey: supabaseAnonKey,
               "X-Client-Info": "pillflow-web-app",
-              "Access-Control-Allow-Origin": "*",
             },
+            credentials: "include",
             body: JSON.stringify({
               email,
               password,

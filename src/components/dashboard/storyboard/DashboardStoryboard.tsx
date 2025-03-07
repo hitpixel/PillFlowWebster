@@ -7,7 +7,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Users, Calendar, Package, LineChart, ArrowUp } from "lucide-react";
-import { DashboardProvider } from "../context/DashboardContext";
+import DashboardProvider from "../context/DashboardContext";
 
 const DashboardStoryboard = () => {
   return (

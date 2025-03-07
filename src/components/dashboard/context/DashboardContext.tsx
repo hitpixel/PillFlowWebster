@@ -28,15 +28,14 @@ const initialState: DashboardContextType = {
   refreshDashboard: () => {},
 };
 
-export const DashboardContext =
+const DashboardContext =
   React.createContext<DashboardContextType>(initialState);
 
-// Named function component for consistent exports
-export const DashboardProvider = ({
+export default function DashboardProvider({
   children,
 }: {
   children: React.ReactNode;
-}) => {
+}) {
   const [dashboardData, setDashboardData] = React.useState({
     totalCustomers: 0,
     activeCustomers: 0,
@@ -147,13 +146,14 @@ export const DashboardProvider = ({
       {children}
     </DashboardContext.Provider>
   );
-};
+}
 
-// Named function for consistent exports
-export const useDashboard = () => {
+export function useDashboard() {
   const context = React.useContext(DashboardContext);
   if (context === undefined) {
     throw new Error("useDashboard must be used within a DashboardProvider");
   }
   return context;
-};
+}
+
+export { DashboardContext };

@@ -16,13 +16,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
     storageKey: "pillflow-auth-token",
     flowType: "implicit",
-    cookieOptions: {
-      name: "pillflow-auth",
-      lifetime: 60 * 60 * 8,
-      domain: window.location.hostname,
-      sameSite: "lax",
-      secure: window.location.protocol === "https:",
-    },
   },
   global: {
     headers: {

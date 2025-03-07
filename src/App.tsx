@@ -13,7 +13,9 @@ import ScanOut from "./components/pages/scan-out";
 import Customers from "./components/pages/customers";
 import Settings from "./components/pages/settings";
 import { AuthProvider } from "../supabase/auth";
-import { DashboardProvider } from "./components/dashboard/context/DashboardContext";
+import DashboardProvider, {
+  useDashboard,
+} from "./components/dashboard/context/DashboardContext";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

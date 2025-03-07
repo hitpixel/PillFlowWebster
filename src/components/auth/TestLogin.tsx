@@ -28,10 +28,7 @@ export default function TestLogin() {
             apikey:
               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtdW5ka2dhamNmcHRyZ25uaWl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5MjgxOTAsImV4cCI6MjA1NTUwNDE5MH0.TxM0YZOsM9Rmtm2NgRovmvuBDT2wbg_B4T87FYqOnEA",
             "X-Client-Info": "pillflow-web-app",
-            "Access-Control-Allow-Origin": "*",
           },
-          mode: "cors",
-          credentials: "include",
           body: JSON.stringify({
             email,
             password,

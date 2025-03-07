@@ -204,10 +204,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Update the redirect URL for the new Supabase project
-      const callbackUrl = redirectUrl.replace(
-        "dmundkgajcfptrgnniiy",
-        "hboghefefjvwbroshixn",
-      );
+      const callbackUrl = redirectUrl;
 
       console.log("Google OAuth redirect URL:", redirectUrl);
       console.log("Current hostname:", hostname);
@@ -215,7 +212,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: "offline",
             prompt: "consent",

@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
 import { useAuth } from "../supabase/auth";
 import routes from "tempo-routes";
@@ -70,6 +70,18 @@ function AppRoutes() {
           element={
             <PrivateRoute>
               <Settings />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <PrivateRoute>
+              <Suspense fallback={<div>Loading...</div>}>
+                {React.createElement(
+                  React.lazy(() => import("./components/pages/reports")),
+                )}
+              </Suspense>
             </PrivateRoute>
           }
         />

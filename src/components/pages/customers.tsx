@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { supabase } from "../../../supabase/supabase";
 
 const CustomersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");

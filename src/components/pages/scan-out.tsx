@@ -101,9 +101,24 @@ const ScanOut = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        // Load customers
-        const customersData = await getCustomers();
-        setCustomers(customersData);
+        // Load customers directly from Supabase for immediate results
+        const { data: userData } = await supabase.auth.getUser();
+        const userId = userData?.user?.id;
+
+        if (!userId) {
+          throw new Error("User not authenticated");
+        }
+
+        // Get customers for the current user only
+        const { data: customersData, error: customersError } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("user_id", userId)
+          .order("full_name");
+
+        if (customersError) throw customersError;
+        console.log("Loaded customers:", customersData);
+        setCustomers(customersData || []);
 
         // Load webster packs
         const packsData = await getWebsterPacks();
@@ -114,6 +129,8 @@ const ScanOut = () => {
       } catch (err) {
         console.error("Error loading data:", err);
         // Don't set generic error message, only show specific errors
+        setLoading(false);
+      } finally {
         setLoading(false);
       }
     };
@@ -146,7 +163,7 @@ const ScanOut = () => {
 
         // Create a new collection record directly with the barcode
         const collectionData = {
-          packs_id: barcode, // Store the barcode directly in packs_id (not pack_id)
+          packs_id: barcode.toString(), // Convert to string to ensure compatibility
           customer_id: selectedPatient?.id || null, // Use selected patient if available
           collection_date: new Date().toISOString(),
           collected_by: initial,
@@ -156,21 +173,30 @@ const ScanOut = () => {
           // Add pack type and count directly to the table
           pack_type: packType,
           pack_count: packCount,
-          user_id: userId, // Associate with current user
+          // Removed user_id as it doesn't exist in the collections table
         };
 
         console.log("Creating collection with data:", collectionData);
 
+        console.log("Submitting collection data:", collectionData);
+
         // Insert directly into collections table
         const { data: newCollection, error: collectionError } = await supabase
           .from("collections")
-          .insert(collectionData)
+          .insert([collectionData]) // Wrap in array to ensure proper format
           .select()
           .single();
 
+        console.log("Insert response:", {
+          data: newCollection,
+          error: collectionError,
+        });
+
         if (collectionError) {
           console.error("Error creating collection:", collectionError);
-          setError("Failed to save scan. Please try again.");
+          setError(
+            `Failed to save scan: ${collectionError.message || collectionError}`,
+          );
           setIsScanned(false);
           return;
         }
@@ -194,19 +220,19 @@ const ScanOut = () => {
         }, 2000);
       } catch (err) {
         console.error("Error scanning pack:", err);
-        setError("An error occurred. Please try again.");
+        setError(`Error: ${err.message || "An unknown error occurred"}`);
         setIsScanned(false);
       }
     }
   };
 
   const filteredCustomers = customers.filter((customer) => {
-    if (searchTerm === "") return true;
+    if (!searchTerm || searchTerm.trim() === "") return true;
 
-    const search = searchTerm.toLowerCase();
-    const fullName = customer.full_name.toLowerCase();
+    const search = searchTerm.toLowerCase().trim();
+    const fullName = customer.full_name?.toLowerCase() || "";
     const nameParts = fullName.split(" ");
-    const id = customer.id.toLowerCase();
+    const id = customer.id?.toLowerCase() || "";
 
     return (
       fullName.includes(search) ||
@@ -253,7 +279,15 @@ const ScanOut = () => {
                     className="bg-[#1a2133] border-[#1e2738] pr-10"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onClick={() => setSearchTerm(searchTerm || " ")} // Force dropdown to show on click
+                    onClick={() => {
+                      // Force dropdown to show on click
+                      setSearchTerm(" ");
+                      // Force a re-render to show all customers
+                      setTimeout(() => {
+                        console.log("Showing all customers");
+                      }, 10);
+                    }}
+                    autoComplete="off"
                   />
                   <Button
                     variant="ghost"
@@ -292,14 +326,20 @@ const ScanOut = () => {
                     </div>
                   </div>
                 )}
-                {searchTerm && (
-                  <div className="mt-2 rounded-md bg-[#1a2133] p-2 max-h-60 overflow-y-auto z-50 relative w-full">
-                    {filteredCustomers.length > 0 ? (
+                {(searchTerm || searchTerm === " ") && (
+                  <div className="mt-2 rounded-md bg-[#1a2133] p-2 max-h-60 overflow-y-auto z-50 absolute w-full shadow-lg">
+                    {console.log("Filtered customers:", filteredCustomers)}
+                    {customers.length === 0 ? (
+                      <div className="p-2 text-gray-400 text-center">
+                        Loading customers...
+                      </div>
+                    ) : filteredCustomers.length > 0 ? (
                       filteredCustomers.map((customer) => (
                         <div
                           key={customer.id}
                           className="flex items-center justify-between p-2 hover:bg-[#232d42] rounded cursor-pointer"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
                             setSelectedPatient(customer);
                             setSearchTerm(""); // Clear search after selection
                             console.log("Selected customer:", customer);
@@ -337,6 +377,7 @@ const ScanOut = () => {
                             size="sm"
                             className="text-blue-400 hover:text-blue-300 h-7"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation(); // Prevent parent onClick from firing
                               setSelectedPatient(customer);
                               setSearchTerm(""); // Clear search after selection
@@ -472,6 +513,7 @@ const ScanOut = () => {
                       type="submit"
                       className="w-full bg-blue-600 hover:bg-blue-700"
                       disabled={isScanned || !barcode || !initial}
+                      onClick={handleSubmit}
                     >
                       {isScanned ? (
                         <>

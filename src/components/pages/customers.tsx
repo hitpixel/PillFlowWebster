@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "../dashboard/layout/DashboardLayout";
 import { getCustomers, createCustomer, updateCustomer } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Edit, Package } from "lucide-react";
+import { Search, Plus, Edit, Package, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,14 +14,18 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import CustomerDialog from "../dashboard/CustomerDialog";
 import { Label } from "@/components/ui/label";
 import { supabase } from "../../../supabase/supabase";
 
 const CustomersPage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [isCustomerDashboardOpen, setIsCustomerDashboardOpen] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,12 +34,14 @@ const CustomersPage = () => {
     email: "",
     phone: "",
     address: "",
+    date_of_birth: "",
   });
   const [addForm, setAddForm] = useState({
     full_name: "",
     email: "",
     phone: "",
     address: "",
+    date_of_birth: "",
   });
 
   useEffect(() => {
@@ -76,6 +83,7 @@ const CustomersPage = () => {
       email: customer.email || "",
       phone: customer.phone || "",
       address: customer.address || "",
+      date_of_birth: customer.date_of_birth || "",
     });
     setIsEditDialogOpen(true);
   };
@@ -97,6 +105,7 @@ const CustomersPage = () => {
         email: editForm.email,
         phone: editForm.phone,
         address: editForm.address,
+        date_of_birth: editForm.date_of_birth || null,
       });
 
       // Update the customer in the local state
@@ -175,6 +184,7 @@ const CustomersPage = () => {
         email: "",
         phone: "",
         address: "",
+        date_of_birth: "",
       });
     } catch (err) {
       console.error("Error adding customer:", err);
@@ -225,7 +235,11 @@ const CustomersPage = () => {
             {filteredPatients.map((customer) => (
               <Card
                 key={customer.id}
-                className="bg-[#0d121f] border-[#1e2738] overflow-hidden"
+                className="bg-[#0d121f] border-[#1e2738] overflow-hidden cursor-pointer hover:border-blue-500/50 transition-colors"
+                onClick={() => {
+                  setSelectedCustomerId(customer.id);
+                  setIsCustomerDashboardOpen(true);
+                }}
               >
                 <CardContent className="p-0">
                   <div className="p-6">
@@ -279,17 +293,39 @@ const CustomersPage = () => {
                           Address: {customer.address}
                         </p>
                       )}
+                      {customer.date_of_birth && (
+                        <p className="text-sm text-gray-300">
+                          DOB:{" "}
+                          {new Date(
+                            customer.date_of_birth,
+                          ).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-6 flex justify-end gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         className="border-[#1e2738] bg-[#1a2133] text-gray-300 hover:bg-[#232d42] hover:text-white"
-                        onClick={() => handleEditClick(customer)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(customer);
+                        }}
                       >
                         <Edit className="mr-2 h-4 w-4" />
                         Edit Details
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/customers/${customer.id}`);
+                        }}
+                      >
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        View Dashboard
                       </Button>
                     </div>
                   </div>
@@ -344,6 +380,17 @@ const CustomersPage = () => {
                   name="address"
                   className="bg-[#1a2133] border-[#1e2738]"
                   value={editForm.address}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date_of_birth">Date of Birth</Label>
+                <Input
+                  id="date_of_birth"
+                  name="date_of_birth"
+                  type="date"
+                  className="bg-[#1a2133] border-[#1e2738]"
+                  value={editForm.date_of_birth}
                   onChange={handleFormChange}
                 />
               </div>
@@ -418,6 +465,17 @@ const CustomersPage = () => {
                   placeholder="123 Main St, Anytown, USA"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-dob">Date of Birth</Label>
+                <Input
+                  id="add-dob"
+                  name="date_of_birth"
+                  type="date"
+                  className="bg-[#1a2133] border-[#1e2738]"
+                  value={addForm.date_of_birth}
+                  onChange={handleAddFormChange}
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button
@@ -436,6 +494,13 @@ const CustomersPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Customer Dashboard Dialog */}
+        <CustomerDialog
+          customerId={selectedCustomerId}
+          open={isCustomerDashboardOpen}
+          onOpenChange={setIsCustomerDashboardOpen}
+        />
       </div>
     </DashboardLayout>
   );

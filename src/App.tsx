@@ -66,6 +66,20 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/customers/:id"
+          element={
+            <PrivateRoute>
+              <Suspense fallback={<div>Loading...</div>}>
+                {React.createElement(
+                  React.lazy(
+                    () => import("./components/pages/customer-details"),
+                  ),
+                )}
+              </Suspense>
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/settings"
           element={
             <PrivateRoute>

@@ -7,6 +7,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +36,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -486,9 +493,25 @@ const Reports = () => {
         <div className="grid gap-4 md:grid-cols-4">
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
-                Total Collections
-              </CardTitle>
+              <div className="flex items-center gap-1">
+                <CardTitle className="text-sm font-medium text-gray-400">
+                  Total Collections
+                </CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-3 w-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Total number of collections completed during the
+                        selected date range. Each record in the collections
+                        table counts as one collection.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -502,9 +525,25 @@ const Reports = () => {
 
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
-                Active Customers
-              </CardTitle>
+              <div className="flex items-center gap-1">
+                <CardTitle className="text-sm font-medium text-gray-400">
+                  Active Customers
+                </CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-3 w-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Number of customers with status set to "active". Only
+                        includes customers who had collections during the
+                        selected date range.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -518,9 +557,25 @@ const Reports = () => {
 
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
-                Blister Packs
-              </CardTitle>
+              <div className="flex items-center gap-1">
+                <CardTitle className="text-sm font-medium text-gray-400">
+                  Blister Packs
+                </CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-3 w-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Total number of blister packs collected during the
+                        selected date range. Calculated from collections with
+                        pack_type="blister".
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -534,9 +589,25 @@ const Reports = () => {
 
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
-                Sachets
-              </CardTitle>
+              <div className="flex items-center gap-1">
+                <CardTitle className="text-sm font-medium text-gray-400">
+                  Sachets
+                </CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-3 w-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Total number of sachets collected during the selected
+                        date range. Calculated from collections with
+                        pack_type="sachet".
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{summaryStats.sachets}</div>
@@ -576,7 +647,24 @@ const Reports = () => {
           <TabsContent value="collections">
             <Card className="bg-[#0d121f] text-white border-[#1e2738]">
               <CardHeader>
-                <CardTitle>Collections by Day</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle>Collections by Day</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                        <p>
+                          Shows the distribution of collections by day of the
+                          week. Helps identify which days have the highest
+                          collection volumes. Based on the collection_date
+                          field.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <CardDescription className="text-gray-400">
                   Number of collections per day for the selected period
                 </CardDescription>
@@ -591,7 +679,7 @@ const Reports = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e2738" />
                       <XAxis dataKey="name" stroke="#64748b" />
                       <YAxis stroke="#64748b" />
-                      <Tooltip
+                      <RechartsTooltip
                         contentStyle={{
                           backgroundColor: "#1a2133",
                           borderColor: "#1e2738",
@@ -655,7 +743,23 @@ const Reports = () => {
           <TabsContent value="packTypes">
             <Card className="bg-[#0d121f] text-white border-[#1e2738]">
               <CardHeader>
-                <CardTitle>Pack Type Distribution</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle>Pack Type Distribution</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                        <p>
+                          Shows the percentage breakdown of different pack types
+                          (blister packs vs sachets). Calculated as (count of
+                          each type / total packs) × 100.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <CardDescription className="text-gray-400">
                   Distribution of different pack types for the selected period
                 </CardDescription>
@@ -681,7 +785,7 @@ const Reports = () => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip
+                        <RechartsTooltip
                           contentStyle={{
                             backgroundColor: "#1a2133",
                             borderColor: "#1e2738",
@@ -733,7 +837,23 @@ const Reports = () => {
           <TabsContent value="customers">
             <Card className="bg-[#0d121f] text-white border-[#1e2738]">
               <CardHeader>
-                <CardTitle>Top Customers by Collections</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle>Top Customers by Collections</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                        <p>
+                          Ranks customers by the number of collections they've
+                          had during the selected period. Shows the top 5
+                          customers with the most collections.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <CardDescription className="text-gray-400">
                   Customers with the most collections for the selected period
                 </CardDescription>
@@ -755,7 +875,7 @@ const Reports = () => {
                         width={80}
                         tick={{ fontSize: 12 }}
                       />
-                      <Tooltip
+                      <RechartsTooltip
                         contentStyle={{
                           backgroundColor: "#1a2133",
                           borderColor: "#1e2738",
@@ -781,7 +901,24 @@ const Reports = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader>
-              <CardTitle>Collection Efficiency</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle>Collection Efficiency</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-4 w-4 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Measures the time efficiency of collection processes.
+                        Average time is calculated from timestamps of collection
+                        start and completion. Total time is the sum of all
+                        collection times.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <CardDescription className="text-gray-400">
                 Time spent per collection
               </CardDescription>
@@ -810,7 +947,24 @@ const Reports = () => {
 
           <Card className="bg-[#0d121f] text-white border-[#1e2738]">
             <CardHeader>
-              <CardTitle>Collection Trends</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle>Collection Trends</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="h-4 w-4 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-[#1a2133] border-[#1e2738] text-white max-w-xs">
+                      <p>
+                        Compares collection volumes between the current week and
+                        previous week. Change percentage is calculated as ((this
+                        week - last week) / last week) × 100. Projected
+                        collections are estimated based on current growth rate.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <CardDescription className="text-gray-400">
                 Week-over-week comparison
               </CardDescription>

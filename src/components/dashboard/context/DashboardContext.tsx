@@ -31,11 +31,7 @@ const initialState: DashboardContextType = {
 const DashboardContext =
   React.createContext<DashboardContextType>(initialState);
 
-export default function DashboardProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const DashboardProvider = ({ children }: { children: React.ReactNode }) => {
   const [dashboardData, setDashboardData] = React.useState({
     totalCustomers: 0,
     activeCustomers: 0,
@@ -146,7 +142,7 @@ export default function DashboardProvider({
       {children}
     </DashboardContext.Provider>
   );
-}
+};
 
 export function useDashboard() {
   const context = React.useContext(DashboardContext);
@@ -157,3 +153,4 @@ export function useDashboard() {
 }
 
 export { DashboardContext };
+export default DashboardProvider;

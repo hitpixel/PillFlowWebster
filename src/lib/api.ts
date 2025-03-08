@@ -58,13 +58,14 @@ export const createCustomer = async (
     throw new Error("User not authenticated");
   }
 
-  // Add created_at and updated_at timestamps and user_id
+  // Add created_at, updated_at timestamps, user_id and handle date_of_birth
   const now = new Date().toISOString();
   const customerWithTimestamps = {
     ...customer,
     created_at: now,
     updated_at: now,
     user_id: userId,
+    date_of_birth: customer.date_of_birth || null,
   };
 
   const { data, error } = await supabase

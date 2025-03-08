@@ -47,8 +47,9 @@ const ScanOut = () => {
       // Format the scans
       const formattedScans = await Promise.all(
         recentCollections.map(async (collection) => {
-          // Get customer name if available
+          // Get customer name and DOB if available
           let customerName = collection.customers?.full_name || "Unknown";
+          let customerDOB = collection.customers?.date_of_birth || null;
 
           // Get pack ID from either packs_id or pack_id field
           const packId = collection.packs_id || collection.pack_id || "";
@@ -62,12 +63,13 @@ const ScanOut = () => {
           if (!collection.customers?.full_name && collection.customer_id) {
             const { data: customerData } = await supabase
               .from("customers")
-              .select("full_name")
+              .select("full_name, date_of_birth")
               .eq("id", collection.customer_id)
               .single();
 
             if (customerData) {
               customerName = customerData.full_name;
+              customerDOB = customerData.date_of_birth;
             }
           }
 
@@ -80,7 +82,8 @@ const ScanOut = () => {
               hour: "2-digit",
               minute: "2-digit",
             }),
-            packName: `${customerName} - ${packName}`,
+            packName: customerName,
+            customerDOB: customerDOB,
             collectionId: collection.id,
             packCount: collection.pack_count,
             packType: collection.pack_type,
@@ -268,7 +271,7 @@ const ScanOut = () => {
             </CardHeader>
             <CardContent>
               {/* Patient Search Section */}
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <Label htmlFor="patient-search" className="mb-2 block">
                   Patient Search
                 </Label>
@@ -314,6 +317,14 @@ const ScanOut = () => {
                         <div className="text-xs text-gray-400">
                           ID: {selectedPatient.id.substring(0, 8)}
                         </div>
+                        {selectedPatient.date_of_birth && (
+                          <div className="text-xs text-gray-400">
+                            DOB:{" "}
+                            {new Date(
+                              selectedPatient.date_of_birth,
+                            ).toLocaleDateString()}
+                          </div>
+                        )}
                       </div>
                       <Button
                         variant="ghost"
@@ -327,7 +338,10 @@ const ScanOut = () => {
                   </div>
                 )}
                 {(searchTerm || searchTerm === " ") && (
-                  <div className="mt-2 rounded-md bg-[#1a2133] p-2 max-h-60 overflow-y-auto z-50 absolute w-full shadow-lg">
+                  <div
+                    className="mt-2 rounded-md bg-[#1a2133] p-2 max-h-60 overflow-y-auto z-50 absolute w-full shadow-lg"
+                    style={{ maxWidth: "calc(100% - 2px)" }}
+                  >
                     {console.log("Filtered customers:", filteredCustomers)}
                     {customers.length === 0 ? (
                       <div className="p-2 text-gray-400 text-center">
@@ -370,6 +384,14 @@ const ScanOut = () => {
                               <div className="text-xs text-gray-400">
                                 ID: {customer.id.substring(0, 8)}
                               </div>
+                              {customer.date_of_birth && (
+                                <div className="text-xs text-gray-400">
+                                  DOB:{" "}
+                                  {new Date(
+                                    customer.date_of_birth,
+                                  ).toLocaleDateString()}
+                                </div>
+                              )}
                             </div>
                           </div>
                           <Button
@@ -440,17 +462,6 @@ const ScanOut = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="barcode">Webster Pack ID</Label>
-                      <Input
-                        id="barcode"
-                        placeholder="Enter pack ID or barcode"
-                        className="bg-[#1a2133] border-[#1e2738]"
-                        value={barcode}
-                        onChange={(e) => setBarcode(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="pack-type">Pack Type</Label>
                       <select
                         id="pack-type"
@@ -477,6 +488,17 @@ const ScanOut = () => {
                         <option value="5">5 Packs (5 Weeks)</option>
                         <option value="6">6 Packs (6 Weeks)</option>
                       </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="barcode">Webster Pack ID</Label>
+                      <Input
+                        id="barcode"
+                        placeholder="Enter pack ID or barcode"
+                        className="bg-[#1a2133] border-[#1e2738]"
+                        value={barcode}
+                        onChange={(e) => setBarcode(e.target.value)}
+                        required
+                      />
                     </div>
                     {selectedPatient && (
                       <div className="mt-4 space-y-2">
@@ -544,15 +566,15 @@ const ScanOut = () => {
           </Card>
 
           {/* Recent Scans Card */}
-          <Card className="bg-[#0d121f] text-white border-[#1e2738]">
+          <Card className="bg-[#0d121f] text-white border-[#1e2738] flex flex-col">
             <CardHeader>
               <CardTitle>Recent Scan-Outs</CardTitle>
               <CardDescription className="text-gray-400">
                 Recently scanned webster packs
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <CardContent className="flex-1 overflow-hidden">
+              <div className="space-y-4 h-full overflow-y-auto pr-2 max-h-[calc(100vh-350px)]">
                 {loading ? (
                   <div className="text-center py-8 text-gray-400">
                     <p>Loading recent scans...</p>
@@ -568,7 +590,18 @@ const ScanOut = () => {
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between">
-                          <h4 className="font-medium">{scan.packName}</h4>
+                          <h4 className="font-medium">
+                            {scan.packName}
+                            {scan.customerDOB && (
+                              <span className="text-xs text-gray-400 ml-2">
+                                (DOB:{" "}
+                                {new Date(
+                                  scan.customerDOB,
+                                ).toLocaleDateString()}
+                                )
+                              </span>
+                            )}
+                          </h4>
                           <span className="text-xs text-gray-400">
                             {scan.time}
                           </span>

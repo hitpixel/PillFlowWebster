@@ -54,12 +54,6 @@ const defaultNavItems: NavItem[] = [
     isActive: false,
   },
   {
-    icon: <Calendar size={16} />,
-    label: "Schedule",
-    href: "/schedule",
-    isActive: false,
-  },
-  {
     icon: <LineChart size={16} />,
     label: "Reports",
     href: "/reports",

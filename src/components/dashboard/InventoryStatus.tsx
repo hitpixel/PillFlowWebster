@@ -15,7 +15,7 @@ interface PackTypeStats {
   type: string;
   count: number;
   percentage: number;
-  status: "High-demanding" | "Low-demanding";
+  status: "High-demand" | "Low-demand";
   statusColor: string;
 }
 
@@ -64,7 +64,7 @@ const InventoryStatus = ({}: InventoryStatusProps) => {
           type: "Blister Packs",
           count: blisterCount,
           percentage: blisterPercentage,
-          status: blisterPercentage > 40 ? "High-demanding" : "Low-demanding",
+          status: blisterPercentage > 40 ? "High-demand" : "Low-demand",
           statusColor:
             blisterPercentage > 40 ? "text-blue-400" : "text-gray-400",
         });
@@ -77,7 +77,7 @@ const InventoryStatus = ({}: InventoryStatusProps) => {
           type: "Sachets",
           count: sachetCount,
           percentage: sachetPercentage,
-          status: sachetPercentage > 40 ? "High-demanding" : "Low-demanding",
+          status: sachetPercentage > 40 ? "High-demand" : "Low-demand",
           statusColor:
             sachetPercentage > 40 ? "text-blue-400" : "text-gray-400",
         });
@@ -91,7 +91,7 @@ const InventoryStatus = ({}: InventoryStatusProps) => {
               type: type.charAt(0).toUpperCase() + type.slice(1),
               count,
               percentage,
-              status: percentage > 40 ? "High-demanding" : "Low-demanding",
+              status: percentage > 40 ? "High-demand" : "Low-demand",
               statusColor: percentage > 40 ? "text-blue-400" : "text-gray-400",
             });
           }
@@ -106,14 +106,14 @@ const InventoryStatus = ({}: InventoryStatusProps) => {
             type: "Blister Packs",
             count: 0,
             percentage: 0,
-            status: "Low-demanding",
+            status: "Low-demand",
             statusColor: "text-gray-400",
           },
           {
             type: "Sachets",
             count: 0,
             percentage: 0,
-            status: "Low-demanding",
+            status: "Low-demand",
             statusColor: "text-gray-400",
           },
         ]);

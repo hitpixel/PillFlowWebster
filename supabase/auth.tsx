@@ -11,11 +11,9 @@ type AuthContextType = {
   signOut: () => Promise<void>;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -120,11 +118,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // If SDK method fails, try direct API approach with no credentials
         console.warn("SDK method failed, trying direct API approach");
 
-        const supabaseUrl =
-          import.meta.env.VITE_SUPABASE_URL ||
-          "https://hboghefefjvwbroshixn.supabase.co";
+        const supabaseUrl = "https://hboghefefjvwbroshixn.supabase.co";
         const supabaseAnonKey =
-          import.meta.env.VITE_SUPABASE_ANON_KEY ||
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhib2doZWZlZmp2d2Jyb3NoaXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMTA0NjYsImV4cCI6MjA1Njg4NjQ2Nn0.isMKZ7lUukyucD31EpZJN1XBPEmnjBD5ygY9XahYae4";
 
         const response = await fetch(
@@ -241,12 +236,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
+};
+
+export { AuthContext, AuthProvider, useAuth };

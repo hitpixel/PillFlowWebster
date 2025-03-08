@@ -31,7 +31,7 @@ export default function LoginForm() {
       // Provide more detailed error information
       if (error.message && error.message.includes("Failed to fetch")) {
         setError(
-          `Network error: Failed to connect to Supabase. Please check your network connection. URL: https://hboghefefjvwbroshixn.supabase.co`,
+          `Network error: Failed to connect to Supabase. Please check your network connection. URL: ${import.meta.env.VITE_SUPABASE_URL}`,
         );
       } else if (error.status) {
         setError(`Server error (${error.status}): ${error.message}`);

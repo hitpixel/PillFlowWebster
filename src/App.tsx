@@ -3,14 +3,12 @@ import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
 import { useAuth } from "../supabase/auth";
 import routes from "tempo-routes";
 import LoginForm from "./components/auth/LoginForm";
-import SignUpForm from "./components/auth/SignUpForm";
-import TestLogin from "./components/auth/TestLogin";
+import RegisterPage from "./components/auth/RegisterPage";
 import NetworkTest from "./components/auth/NetworkTest";
 import GoogleCallback from "./components/auth/GoogleCallback";
 import DebugSession from "./components/auth/DebugSession";
 import Dashboard from "./components/pages/dashboard";
 import Success from "./components/pages/success";
-import Home from "./components/pages/home";
 import ScanOut from "./components/pages/scan-out";
 import Customers from "./components/pages/customers";
 import Settings from "./components/pages/settings";
@@ -37,12 +35,11 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/signup" element={<RegisterPage />} />
         <Route path="/auth/callback" element={<GoogleCallback />} />
         <Route path="/debug-session" element={<DebugSession />} />
-        <Route path="/test-login" element={<TestLogin />} />
         <Route path="/network-test" element={<NetworkTest />} />
         <Route
           path="/dashboard"

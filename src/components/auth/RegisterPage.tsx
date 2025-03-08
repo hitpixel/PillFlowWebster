@@ -3,41 +3,42 @@ import { useAuth } from "../../../supabase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate, Link } from "react-router-dom";
-import { Pill, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Pill } from "lucide-react";
 
-export default function LoginForm() {
+export default function RegisterPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [organization, setOrganization] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
     try {
-      console.log("Attempting login with:", email);
-      // Add a small delay to ensure network is ready
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await signIn(email, password);
-      console.log("Login successful, navigating to dashboard");
-      navigate("/dashboard");
+      console.log("Attempting signup with:", email);
+      const fullName = `${firstName} ${lastName}`.trim();
+      await signUp(email, password, fullName);
+      console.log("Account created successfully");
+      navigate("/login");
     } catch (error: any) {
-      console.error("Login error:", error);
-      // Provide more detailed error information
-      if (error.message && error.message.includes("Failed to fetch")) {
-        setError(
-          `Network error: Failed to connect to Supabase. Please check your network connection. URL: https://hboghefefjvwbroshixn.supabase.co`,
-        );
-      } else if (error.status) {
-        setError(`Server error (${error.status}): ${error.message}`);
-      } else {
-        setError(error?.message || "Invalid email or password");
-      }
+      console.error("Signup error:", error);
+      setError(error?.message || "Error creating account");
     } finally {
       setLoading(false);
     }
@@ -68,16 +69,15 @@ export default function LoginForm() {
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-20">
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-white">
-            Welcome to PillFlow
+            Join PillFlow Today
           </h1>
           <p className="text-lg text-gray-300">
-            Streamline your healthcare webster packing workflow with our modern
-            solution.
+            Experience the future of healthcare webster packing management.
           </p>
         </div>
       </div>
 
-      {/* Right side - Login form */}
+      {/* Right side - Registration form */}
       <div className="flex w-full lg:w-1/2 relative z-10">
         <div className="mx-auto flex w-full max-w-lg flex-col justify-center space-y-6 px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-2">
@@ -86,13 +86,41 @@ export default function LoginForm() {
           </div>
           <div>
             <h2 className="text-3xl font-bold tracking-tight text-white">
-              Welcome back
+              Create an account
             </h2>
             <p className="mt-2 text-gray-400">
-              Please enter your details to sign in to your account
+              Please enter your details to create your account
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="firstName" className="text-gray-200">
+                  First name
+                </Label>
+                <Input
+                  id="firstName"
+                  placeholder="Enter your first name"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName" className="text-gray-200">
+                  Last name
+                </Label>
+                <Input
+                  id="lastName"
+                  placeholder="Enter your last name"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-200">
                 Email
@@ -101,9 +129,9 @@ export default function LoginForm() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
                 className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
               />
             </div>
@@ -114,26 +142,39 @@ export default function LoginForm() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
               />
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember" className="text-sm text-gray-300">
-                  Remember me
-                </Label>
-              </div>
-              <Link
-                to="/forgot-password"
-                className="text-sm text-blue-400 hover:text-blue-300"
-              >
-                Forgot password?
-              </Link>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-gray-200">
+                Confirm Password
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="organization" className="text-gray-200">
+                Organization Name
+              </Label>
+              <Input
+                id="organization"
+                placeholder="Enter your organization name"
+                required
+                value={organization}
+                onChange={(e) => setOrganization(e.target.value)}
+                className="bg-[#1a2133] border-[#1e2738] text-white placeholder-gray-400"
+              />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
             <Button
@@ -141,7 +182,7 @@ export default function LoginForm() {
               className="w-full bg-blue-600 hover:bg-blue-500"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Creating account..." : "Create account"}
             </Button>
 
             <div className="relative my-4">
@@ -183,13 +224,23 @@ export default function LoginForm() {
                   d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
                 />
               </svg>
-              Sign in with Google
+              Sign up with Google
             </Button>
           </form>
           <div className="text-center text-sm text-gray-400">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-400 hover:text-blue-300">
-              Sign up
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-400 hover:text-blue-300">
+              Sign in
+            </Link>
+          </div>
+          <div className="text-center text-xs text-gray-500">
+            By creating an account, you agree to our{" "}
+            <Link to="/terms" className="text-blue-400 hover:text-blue-300">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="text-blue-400 hover:text-blue-300">
+              Privacy Policy
             </Link>
           </div>
         </div>

@@ -12,6 +12,7 @@ import Success from "./components/pages/success";
 import ScanOut from "./components/pages/scan-out";
 import Customers from "./components/pages/customers";
 import Settings from "./components/pages/settings";
+import CheckingPacks from "./components/pages/checking-packs";
 import { AuthProvider } from "../supabase/auth";
 import DashboardProvider, {
   useDashboard,
@@ -54,6 +55,18 @@ function AppRoutes() {
           element={
             <PrivateRoute>
               <ScanOut />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/checking-packs"
+          element={
+            <PrivateRoute>
+              <Suspense fallback={<div>Loading...</div>}>
+                {React.createElement(
+                  React.lazy(() => import("./components/pages/checking-packs")),
+                )}
+              </Suspense>
             </PrivateRoute>
           }
         />

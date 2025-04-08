@@ -16,6 +16,8 @@ import {
   QrCode,
   Bell,
   LogOut,
+  CreditCard,
+  CheckSquare,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,6 +50,12 @@ const defaultNavItems: NavItem[] = [
     isActive: false,
   },
   {
+    icon: <CheckSquare size={16} />,
+    label: "Checking Packs",
+    href: "/checking-packs",
+    isActive: false,
+  },
+  {
     icon: <Users size={16} />,
     label: "Customers",
     href: "/customers",
@@ -59,6 +67,7 @@ const defaultNavItems: NavItem[] = [
     href: "/reports",
     isActive: false,
   },
+
   {
     icon: <Settings size={16} />,
     label: "Settings",

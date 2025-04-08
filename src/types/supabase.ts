@@ -112,6 +112,10 @@ export type Database = {
           id: string
           phone: string | null
           status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          trial_end: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -125,6 +129,10 @@ export type Database = {
           id?: string
           phone?: string | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          trial_end?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -138,6 +146,10 @@ export type Database = {
           id?: string
           phone?: string | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          trial_end?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -217,6 +229,89 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          customer_id: string | null
+          error_message: string | null
+          id: string
+          payment_intent: string | null
+          status: string
+          stripe_checkout_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          customer_id?: string | null
+          error_message?: string | null
+          id?: string
+          payment_intent?: string | null
+          status?: string
+          stripe_checkout_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          customer_id?: string | null
+          error_message?: string | null
+          id?: string
+          payment_intent?: string | null
+          status?: string
+          stripe_checkout_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_plans: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          description: string | null
+          id: string
+          interval: string
+          name: string
+          stripe_price_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          interval?: string
+          name: string
+          stripe_price_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          interval?: string
+          name?: string
+          stripe_price_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       webster_packs: {
         Row: {

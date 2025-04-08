@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Package, Calendar, User, Phone, Mail, MapPin } from "lucide-react";
 import CustomerCollectionChart from "./CustomerCollectionChart";
 import CustomerCollectionsList from "./CustomerCollectionsList";
+import CustomerPackChecks from "./CustomerPackChecks";
 
 interface CustomerDialogProps {
   customerId: string;
@@ -181,7 +182,7 @@ const CustomerDialog = ({
             </div>
 
             <Tabs defaultValue="analytics" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-[#1a2133]">
+              <TabsList className="grid w-full grid-cols-3 bg-[#1a2133]">
                 <TabsTrigger
                   value="analytics"
                   className="data-[state=active]:bg-[#232d42]"
@@ -195,6 +196,13 @@ const CustomerDialog = ({
                 >
                   <Package className="mr-2 h-4 w-4" />
                   Collections
+                </TabsTrigger>
+                <TabsTrigger
+                  value="checks"
+                  className="data-[state=active]:bg-[#232d42]"
+                >
+                  <Package className="mr-2 h-4 w-4" />
+                  Packs Checked
                 </TabsTrigger>
               </TabsList>
 
@@ -293,6 +301,10 @@ const CustomerDialog = ({
 
               <TabsContent value="collections" className="mt-4">
                 <CustomerCollectionsList customerId={customerId} />
+              </TabsContent>
+
+              <TabsContent value="checks" className="mt-4">
+                <CustomerPackChecks customerId={customerId} />
               </TabsContent>
             </Tabs>
           </>

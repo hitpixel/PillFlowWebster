@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../dashboard/layout/DashboardLayout";
 import { useAuth } from "../../../supabase/auth";
 import { supabase } from "../../../supabase/supabase";
@@ -16,10 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { User, Building2, MapPin, Phone, Mail, Save } from "lucide-react";
 
 const Settings = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -114,6 +117,7 @@ const Settings = () => {
               <Building2 className="mr-2 h-4 w-4" />
               Pharmacy
             </TabsTrigger>
+
             <TabsTrigger
               value="security"
               className="data-[state=active]:bg-[#232d42]"
